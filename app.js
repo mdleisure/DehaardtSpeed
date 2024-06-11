@@ -5,27 +5,29 @@ const app = express();
 const EverSocket = require('eversocket').EverSocket;
 app.use(express.json());
 
-// app.get('/', (req, res) => res.send('<h1>Hello, World!</h1>'));
+// app.get('/', (req, res) => res.send('<h1>Hello, World!</h1>')); //Init test server
 
 app.listen(3000, () => console.log('Server listening on port 3000'));
 
+//Listen for post to server and process for sending to BB
 app.post('/dh', (req, res) => {
     res.sendStatus(200)
     const id=req.body
-    // const payload='#736052:2 +A \\LST'+id.setSpeed + '\r' + '\n'
+    // const payload='#736052:2 +A \\LST'+id.setSpeed + '\r' + '\n' //Old Static Method
     const payload='#'+Number(id.trans)+':2 +A \\LST'+id.setSpeed + '\r' + '\n'
     sendnewData(payload)
-    console.log("recieved",id.setSpeed,Number(id.trans),"sending paylaod",payload)
+    // console.log("recieved",id.setSpeed,Number(id.trans),"sending paylaod",payload) // Test Payload to console
 })
 
-app.use(express.static('public'));
+app.use(express.static('public')); // Serve Vue3 CDN SPA
 
+// Black Box Connection
 const options = {
 	moxaIpAddress: '192.168.0.193',
 	moxaPort: 23,
 }
 
-
+// Eversocket setup
 const dhSocket = new EverSocket({
     reconnectWait: 100,      // wait 100ms after close event before reconnecting
     timeout: 5000,            // set the idle timeout to 100ms
@@ -56,6 +58,8 @@ dhSocket.on('data', function (data) {
 
   dhSocket.connect(options.moxaPort, options.moxaIpAddress);
 
+
+  //Function to send payload to Black Box from Main
   function sendnewData(cmd){
     //const cmd = 'r11'
     // moxaSocket.write('\n' +(cmd) +'\r', function(err) {
