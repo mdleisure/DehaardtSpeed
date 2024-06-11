@@ -12,9 +12,10 @@ app.listen(3000, () => console.log('Server listening on port 3000'));
 app.post('/dh', (req, res) => {
     res.sendStatus(200)
     const id=req.body
-    const payload='#736052:2 +A \\LST'+id.setSpeed + '\r' + '\n'
+    // const payload='#736052:2 +A \\LST'+id.setSpeed + '\r' + '\n'
+    const payload='#'+Number(id.trans)+':2 +A \\LST'+id.setSpeed + '\r' + '\n'
     sendnewData(payload)
-    console.log("recieved",id.setSpeed,"sending paylaod",payload)
+    console.log("recieved",id.setSpeed,Number(id.trans),"sending paylaod",payload)
 })
 
 app.use(express.static('public'));
@@ -50,8 +51,7 @@ const dhSocket = new EverSocket({
 
 //listen for reply after sending
 dhSocket.on('data', function (data) {
-    // var buff = Buffer.from(data).toString(); // get buffer and convert to string
-    console.log('reply: ', data)
+     console.log('reply: ', data)
 })
 
   dhSocket.connect(options.moxaPort, options.moxaIpAddress);
